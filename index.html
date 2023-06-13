@@ -1,0 +1,39 @@
+<html>
+  <head>
+    <script type="module">
+      import init, { sort as rustSortLib } from "./pkg/rust_sort.js";
+      const LEN = 1000000
+
+      function getArray() {
+        return Array.from({ length: LEN }, () => Math.floor(Math.random() * LEN));
+      }
+      
+      function jsSort() {
+        const arr = getArray()
+        console.time("JS sort");
+        arr.sort();
+        console.timeEnd("JS sort");
+      }
+
+      function rustSort() {
+        const arr = getArray()
+        console.time("Rust sort");
+        rustSortLib(arr.join(','));
+        console.timeEnd("Rust sort");
+      }
+
+      document.getElementById('jsBtn').addEventListener('click', jsSort)
+      init().then(() => {
+        document.getElementById('rustBtn').addEventListener('click', rustSort)
+
+        console.log(`Ready to sort with ${LEN} elements`)
+      })
+    </script>
+  </head>
+  <body>
+    <h1>Rust vs JS sort benchmark</h1>
+    <p>Click the buttons and check JS console for results</p>
+    <button id="jsBtn">Sort with JS</button>
+    <button id="rustBtn">Sort with Rust</button>
+  </body>
+</html>
