@@ -1,24 +1,20 @@
 <html>
   <head>
     <script type="module">
-      import init, { sort as rustSortLib } from "./pkg/rust_sort.js";
-      const LEN = 1000000
-
-      function getArray() {
-        return Array.from({ length: LEN }, () => Math.floor(Math.random() * LEN));
-      }
+      import init, { sort as rustSortLib } from "./pkg/rust_wasm_test.js";
+      const LEN = 10000000
+      const ARRAY = JSON.stringify(Array.from({ length: LEN }, () => Math.floor(Math.random() * LEN)));
       
       function jsSort() {
-        const arr = getArray()
         console.time("JS sort");
+        const arr = JSON.parse(ARRAY)
         arr.sort();
         console.timeEnd("JS sort");
       }
 
       function rustSort() {
-        const arr = getArray()
         console.time("Rust sort");
-        rustSortLib(arr.join(','));
+        rustSortLib(ARRAY);
         console.timeEnd("Rust sort");
       }
 

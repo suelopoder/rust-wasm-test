@@ -1,15 +1,41 @@
 use wasm_bindgen::prelude::*;
+use std::collections::BinaryHeap;
 
 #[wasm_bindgen]
-extern {
-    pub fn alert(s: &str);
+pub fn naive_sort(input: &str) -> String {
+    let chars = input.replace("[", "").replace("]", "");
+    // println!("==== {}", chars);
+    let mut chars: Vec<u32> = chars
+        .split(",")
+        .map(|x| x.parse::<u32>().unwrap())
+        .collect();
+    
+    chars.sort();
+
+    let res = chars
+        .into_iter()
+        .map(|i| i.to_string())
+        .collect::<Vec<String>>().join(",");
+    return format!("[{}]", res);
 }
 
 #[wasm_bindgen]
 pub fn sort(input: &str) -> String {
-    let mut input: Vec<u32> = input.split(",").map(|x| x.parse::<u32>().unwrap()).collect();
-    input.sort();
-    return input.into_iter().map(|i| i.to_string()).collect::<Vec<String>>().join(",");
+    let mut heap = BinaryHeap::new();
+    let chars = input.replace("[", "").replace("]", "");
+
+    chars
+        .split(",")
+        .map(|x| x.parse::<u32>().unwrap())
+        .for_each(|f| heap.push(f));
+
+    let chars = heap.into_sorted_vec();
+
+    let res = chars
+        .into_iter()
+        .map(|i| i.to_string())
+        .collect::<Vec<String>>().join(",");
+    return format!("[{}]", res);
 }
 
 #[cfg(test)]
@@ -18,6 +44,6 @@ mod tests {
 
     #[test]
     fn test_sort() {
-        assert_eq!(sort("10,3,5"), "3,5,10");
+        assert_eq!(sort("[10,3,5]"), "[3,5,10]");
     }
 }
