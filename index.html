@@ -3,25 +3,27 @@
     <script type="module">
       import init, { sort as rustSortLib } from "./pkg/rust_wasm_test.js";
       const LEN = 10000000
-      const ARRAY = JSON.stringify(Array.from({ length: LEN }, () => Math.floor(Math.random() * LEN)));
+      const ARRAY = Array.from({ length: LEN }, () => Math.floor(Math.random() * LEN))
       
       function jsSort() {
+        const arr = structuredClone(ARRAY)
         console.time("JS sort");
-        const arr = JSON.parse(ARRAY)
-        arr.sort();
+        const res = arr.sort((a, b) => a - b);
         console.timeEnd("JS sort");
       }
 
       function rustSort() {
+        const arr = structuredClone(ARRAY)
         console.time("Rust sort");
-        rustSortLib(ARRAY);
+        const res = rustSortLib(arr);
         console.timeEnd("Rust sort");
       }
 
       document.getElementById('jsBtn').addEventListener('click', jsSort)
+      console.time("Load rust lib");
       init().then(() => {
+        console.timeEnd("Load rust lib");
         document.getElementById('rustBtn').addEventListener('click', rustSort)
-
         console.log(`Ready to sort with ${LEN} elements`)
       })
     </script>

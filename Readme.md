@@ -2,10 +2,22 @@
 
 This app is a simple test for Rust on the web via WASM
 
+## Screenshots
+
+This are local screenshots from running this code
+
+![UI](/assets/wasm-rust-ui.png)
+![Chrome timing console output](/assets/wasm-rust-console.png)
+![Chrome performance recording](/assets/wasm-rust-perf.png)
+
 # How
 
 Run `wasm-pack build --target web` to build the JS glue code.
 Then open index.html in a browser.
+
+## Unit test
+
+To test rust code run: `wasm-pack test --node`
 
 # Why
 
