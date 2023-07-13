@@ -1,42 +1,83 @@
 <html>
   <head>
     <script src='./pkg/rust_wasm_test.js'></script>
+    <style>
+      @keyframes some-animation {
+        0%   {background-color: red;}
+        25%  {background-color: green;}
+        50%  {background-color: blue;}
+        100% {background-color: red;}
+      }
+      .animated {
+        width: 100px;
+        height: 100px;
+        background-color: red;
+        animation-name: some-animation;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        margin: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        color: white;
+      }
+    </style>
   </head>
   <body>
     <h1>Rust vs JS sort benchmark</h1>
-    <p>Click the buttons and check JS console for results</p>
-    <button id="jsBtn">Sort with JS</button>
-    <button id="rustBtn">Sort with Rust</button>
-    <button id="jsWorkerBtn">Sort with JS in JS WebWorker</button>
-    <button id="jsWorkerRustBtn">Sort with Rust in JS WebWorker</button>
+    <div>
+      <p>Sorting with these block main thread and cause animation to freeze</p>
+      
+      <button id="jsBtn">Sort with JS</button>
+      <button id="rustBtn">Sort with Rust</button>
+    </div>
+    <div>
+      <p>Animation non stop!</p>
+      
+      <button id="jsWorkerBtn">Sort with JS in JS WebWorker</button>
+      <button id="jsWorkerRustBtn">Sort with Rust in JS WebWorker</button>
+    </div>
+
+    <div class="animated"></div>
 
     <script>
       // globally defined by rust_wasm_test.js
       const { sort: rustSortLib } = wasm_bindgen;
-      
+
       const LEN = 10000000
       const ARRAY = Array.from({ length: LEN }, () => Math.floor(Math.random() * LEN))
+      const feedbackElem = document.getElementsByClassName('animated')[0]
       
       function jsSort() {
         const arr = structuredClone(ARRAY)
+        feedbackElem.textContent = 'Sorting';
         console.time("JS sort");
         const res = arr.sort((a, b) => a - b);
         console.timeEnd("JS sort");
+        feedbackElem.textContent = 'Done!';
       }
 
       function rustSort() {
         const arr = structuredClone(ARRAY)
+        feedbackElem.textContent = 'Sorting';
         console.time("Rust sort");
         const res = rustSortLib(arr);
         console.timeEnd("Rust sort");
+        feedbackElem.textContent = 'Done!';
       }
 
       const worker = new Worker("worker.js");
       function jsWorkerSort() {
+        feedbackElem.textContent = 'Sorting';
         worker.postMessage('js');
       }
       function jsWorkerRustSort() {
+        feedbackElem.textContent = 'Sorting';
         worker.postMessage('rust');
+      }
+      worker.onmessage = () => {
+        feedbackElem.textContent = 'Done!';
       }
 
       document.getElementById('jsBtn').addEventListener('click', jsSort)

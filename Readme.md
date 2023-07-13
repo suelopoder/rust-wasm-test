@@ -3,9 +3,6 @@
 This app is a simple test for Rust on the web via WASM.
 I test a simple sort of a big array in plain JS and in a compiled rust lib. Then I tried both again but loaded from a web worker.
 
-The UI is very simple. Just a few buttons and console outputs.
-![UI](/assets/wasm-rust-ui.png)
-
 ![Chrome timing console output](/assets/wasm-rust-console.png)
 ![Chrome performance recording](/assets/wasm-rust-perf.png)
 
@@ -13,6 +10,7 @@ The UI is very simple. Just a few buttons and console outputs.
 As expected Rust beats JS sorting a JS array for big arrays. It's worth noting that both block the main thread. The workaround is to sort within a web worker, with similar timings but not blocking.
 ![Results](/assets/main-thread-vs-worker.png)
 
+![Demo](/assets/demo.gif)
 
 # How
 
