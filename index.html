@@ -1,7 +1,19 @@
 <html>
   <head>
-    <script type="module">
-      import init, { sort as rustSortLib } from "./pkg/rust_wasm_test.js";
+    <script src='./pkg/rust_wasm_test.js'></script>
+  </head>
+  <body>
+    <h1>Rust vs JS sort benchmark</h1>
+    <p>Click the buttons and check JS console for results</p>
+    <button id="jsBtn">Sort with JS</button>
+    <button id="rustBtn">Sort with Rust</button>
+    <button id="jsWorkerBtn">Sort with JS in JS WebWorker</button>
+    <button id="jsWorkerRustBtn">Sort with Rust in JS WebWorker</button>
+
+    <script>
+      // globally defined by rust_wasm_test.js
+      const { sort: rustSortLib } = wasm_bindgen;
+      
       const LEN = 10000000
       const ARRAY = Array.from({ length: LEN }, () => Math.floor(Math.random() * LEN))
       
@@ -19,19 +31,24 @@
         console.timeEnd("Rust sort");
       }
 
+      const worker = new Worker("worker.js");
+      function jsWorkerSort() {
+        worker.postMessage('js');
+      }
+      function jsWorkerRustSort() {
+        worker.postMessage('rust');
+      }
+
       document.getElementById('jsBtn').addEventListener('click', jsSort)
+      document.getElementById('jsWorkerBtn').addEventListener('click', jsWorkerSort)
+      document.getElementById('jsWorkerRustBtn').addEventListener('click', jsWorkerRustSort)
+      
       console.time("Load rust lib");
-      init().then(() => {
+      wasm_bindgen().then(() => {
         console.timeEnd("Load rust lib");
         document.getElementById('rustBtn').addEventListener('click', rustSort)
-        console.log(`Ready to sort with ${LEN} elements`)
+        console.log(`Ready to sort with ${LEN} elements. Click a button!`)
       })
     </script>
-  </head>
-  <body>
-    <h1>Rust vs JS sort benchmark</h1>
-    <p>Click the buttons and check JS console for results</p>
-    <button id="jsBtn">Sort with JS</button>
-    <button id="rustBtn">Sort with Rust</button>
   </body>
 </html>
